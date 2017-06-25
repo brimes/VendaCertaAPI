@@ -47,6 +47,13 @@ class SalesQuery extends QueryAbstract
         ];
     }
 
+    public function args()
+    {
+        return [
+            'id' => ['type' => Type::string()],
+        ];
+    }
+
     protected function resolve()
     {
         return function ($root, $args) {
@@ -59,8 +66,21 @@ class SalesQuery extends QueryAbstract
                 file_put_contents($storageFileName, $salesContents);
             }
 
-            $salesData = json_decode($salesContents, true);
-            return $salesData;
+            if (empty($args['id'])) {
+                return json_decode($salesContents, true);
+            }
+
+            foreach (json_decode($salesContents, true) as $key => $value) {
+                if (empty($value['id'])) {
+                    continue;
+                }
+
+                if ($value['id'] == $args['id']) {
+                    return [$value];
+                }
+            }
+
+
         };
     }
 }

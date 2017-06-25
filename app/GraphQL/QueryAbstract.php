@@ -27,6 +27,7 @@ abstract class QueryAbstract
         return [
             'type' => Type::listOf($this->getType()),
             'description' => $this->description(),
+            'args' => $this->args(),
             'resolve' => $this->resolve()
         ];
     }
