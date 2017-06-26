@@ -5,91 +5,103 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Venda certa</title>
 
-        <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-        <!-- Styles -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
         <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
+        .mdc-typography {
+            margin: 0px;
+        }
+        .mdc-list-item__end-detail {
+            width: auto;
+        }
+        .mdc-list-item {
+            border-bottom: 1px solid #ccc;
+        }
         </style>
+
     </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+    <body class='mdc-typography'>
+        <header class="mdc-toolbar">
+          <div class="mdc-toolbar__row">
+            <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+              <a href="#" class="material-icons mdc-toolbar__icon--menu">menu</a>
+              <span class="mdc-toolbar__title">Venda Certa</span>
+            </section>
+          </div>
+        </header>
+        <main>
+            <div class='mdc-layout-grid'>
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                        <div class="mdc-list-group">
+                            <h3 class="mdc-list-group__subheader">Vendas</h3>
+                            <ul class="mdc-list mdc-list--two-line mdc-list--avatar-list two-line-avatar-text-icon-demo ">
+                                @foreach ($sales as $sale)
+                                    <li class="mdc-list-item mdc-ripple-upgraded">
+                                        <span class="mdc-list-item__start-detail grey-bg" role="presentation">
+                                          <i class="material-icons status-icon" aria-hidden="true"> {{  (empty($sale['status']) ? "help_outline" : $statusIcon[$sale['status']]) }}</i>
+                                        </span>
+                                        <span class="mdc-list-item__text">
+                                            {{ (empty($sale['date']) ? "Desconhecido" :  $sale['date']) }} - Nº {{ (empty($sale['code']) ? "Desconhecido" :  $sale['code']) }}
+                                            <span class="mdc-list-item__text__secondary status-label">{{ (empty($sale['status']) ? "Em análise" :  $sale['status']) }}</span>
+                                        </span>
+                                        <span class='mdc-list-item__end-detail' data='{{ json_encode($sale) }}'>
+                                            <button class="mdc-button aprovar-venda">
+                                                Aprovar
+                                            </button>
+                                            <button class="mdc-button recusar-venda">
+                                                Recusar
+                                            </button>
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>    
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     </body>
+    <script>
+        $(document).ready(function () {
+            $('.aprovar-venda').click(function () {
+                let self = this
+                let saleData = JSON.parse($(this).parent().attr('data'));
+
+                $.ajax({
+                  url:"{{ url('/api/query') }}",
+                  type:"POST",
+                  contentType:"application/graphql",
+                  data: 'mutation update { updateSale (id: "' + saleData.id + '", status: "Válida") {id, status} }',
+                  dataType:"json",
+                  success: function () {
+                    $(self).parent().parent().find('.status-label').html("Válida");
+                    $(self).parent().parent().find('.status-icon').html("done");
+                  }
+                }) 
+            });
+            $('.recusar-venda').click(function () {
+                let self = this
+                let saleData = JSON.parse($(this).parent().attr('data'));
+
+                $.ajax({
+                  url:"{{ url('/api/query') }}",
+                  type:"POST",
+                  contentType:"application/graphql",
+                  data: 'mutation update { updateSale (id: "' + saleData.id + '", status: "Inválida") {id, status} }',
+                  dataType:"json",
+                  success: function () {
+                    $(self).parent().parent().find('.status-label').html("Inválida");
+                    $(self).parent().parent().find('.status-icon').html("block");
+                  }
+                }) 
+            });
+        });
+    </script>
 </html>

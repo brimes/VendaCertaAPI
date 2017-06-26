@@ -5,16 +5,16 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\ObjectType;
 use App\GraphQL\MutationAbstract;
 
-class SaveSaleMutation extends MutationAbstract
+class NewSaleMutation extends MutationAbstract
 {
     public function name()
     {
-        return 'saveSale';
+        return 'newSale';
     }
 
     public function description()
     {
-        return "The list of sales";
+        return "Create a new sale";
     }
 
     public function args()
