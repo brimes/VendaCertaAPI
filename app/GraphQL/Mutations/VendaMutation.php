@@ -52,10 +52,10 @@ class VendaMutation extends MutationAbstract
             $salesData[]    = [
                 'id'     => $id,
                 'status' => "Em análise",
-                'code' => $args['NumeroAutorizacao'],
-                'date' => $args['DataAutorizacao'],
-                'cnpj' => $args['CNPJLoja'],
-                'cpf' => $args['CPFBalconista'],
+                'code'   => $args['NumeroAutorizacao'],
+                'date'   => $args['DataAutorizacao'],
+                'cnpj'   => $args['CNPJLoja'],
+                'cpf'    => $args['CPFBalconista'],
             ];
             $salesContents  = json_encode($salesData);
             file_put_contents($storageFileName, $salesContents);
