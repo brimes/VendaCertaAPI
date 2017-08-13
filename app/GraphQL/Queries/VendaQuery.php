@@ -73,18 +73,22 @@ class VendaQuery extends QueryAbstract
             }
 
             if (empty($args['id'])) {
-                return json_decode($salesContents, true);
+                return null;
             }
 
             foreach (json_decode($salesContents, true) as $key => $value) {
-                if (empty($value['id'])) {
-                    continue;
-                }
-
                 if ($value['id'] == $args['id']) {
-                    return [$value];
+                    print_r($value);
+                    return [
+                        'status' => $value['status'],
+                        'NumeroAutorizacao' => $value['code'],
+                        'DataAutorizacao' => $value['date'],
+                        'CPFBalconista' => $value['cpf'],
+                        'CNPJLoja' => $value['cnpj'],
+                    ];
                 }
             }
+            return null;
         };
     }
 }
