@@ -48,9 +48,10 @@ class VendaMutation extends MutationAbstract
                 file_put_contents($storageFileName, $salesContents);
             }
             $salesData      = json_decode($salesContents, true);
-            $args['id']     = uniqid();
-            $args['status'] = "Em análise";
+            $id = count($salesData) + 1;
             $salesData[]    = [
+                'id'     => $id,
+                'status' => "Em análise",
                 'code' => $args['NumeroAutorizacao'],
                 'date' => $args['DataAutorizacao'],
                 'cnpj' => $args['CNPJLoja'],
@@ -58,7 +59,7 @@ class VendaMutation extends MutationAbstract
             ];
             $salesContents  = json_encode($salesData);
             file_put_contents($storageFileName, $salesContents);
-            return count($salesContents) + 1;
+            return $id;
         };
     }
 }
