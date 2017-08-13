@@ -46,7 +46,17 @@ class VendaQuery extends QueryAbstract
     public function args()
     {
         return [
-            'id' => ['type' => Type::string()],
+            'id' => ['type' => Type::int()],
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'type' => $this->getType(),
+            'description' => $this->description(),
+            'args' => $this->args(),
+            'resolve' => $this->resolve()
         ];
     }
 
