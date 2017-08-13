@@ -78,7 +78,6 @@ class VendaQuery extends QueryAbstract
 
             foreach (json_decode($salesContents, true) as $key => $value) {
                 if ($value['id'] == $args['id']) {
-                    print_r($value);
                     return [
                         'status' => $value['status'],
                         'NumeroAutorizacao' => $value['code'],
